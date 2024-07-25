@@ -8,8 +8,6 @@ const PORT = process.env.PORT || 5000;
 dotenv.config(); // 환경 변수 로드
 
 // Routes
-const authRoutes = require('./api/auth');
-const postRoutes = require('./api/posts');
 const userRoutes = require('./api/users');
 
 const app = express();
@@ -33,8 +31,6 @@ mongoose.connect(db)
   .catch(err => console.log(err));
 
 // Routes
-app.use('/api/auth', authRoutes);  // 올바른 라우트 경로
-app.use('/api/posts', postRoutes);
 app.use('/api/users', userRoutes);  // 올바른 라우트 경로
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
