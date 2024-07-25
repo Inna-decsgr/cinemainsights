@@ -1,0 +1,20 @@
+# Node modules
+node_modules/
+
+# Environment variables
+.env
+
+# Logs
+*.log
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# IDE or editor specific files
+.vscode/
+.idea/
+*.suo
+*.ntvs_analysis.dat
+*.njsproj
+*.sln
