@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
 const { expressjwt: expressJwt } = require('express-jwt'); // 수정된 임포트 방법
 const cookieParser = require('cookie-parser');
+const dbConfig = require('./config/db.js'); // db.js 파일에서 mongoURI 가져오기
 
 
 dotenv.config(); // 환경 변수 로드
@@ -25,7 +26,7 @@ app.use(cors({
 }));
 
 // DB 설정
-const db = process.env.MONGO_URI; // 환경 변수에서 MongoDB URI 로드
+const db = dbConfig.mongoURI;
 
 // MongoDB랑 연결하기
 mongoose.connect(db)
