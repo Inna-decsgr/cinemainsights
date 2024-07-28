@@ -26,12 +26,16 @@ router.post('/login', (req, res) => {
 
 // 로그아웃 시 쿠키를 삭제
 router.post('/logout', (req, res) => {
-  res.clearCookie('token', {
-    httpOnly: true,
-    secure: false,
-    sameSite: 'lax'
-  });
-  res.status(200).json({ message: 'Logged out successfully' });
+  try {
+    res.clearCookie('token', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax'
+    });
+    res.status(200).json({ message: 'Logged out successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Logout failed', error: error.message });
+  }
 });
 
 module.exports = router;
