@@ -14,7 +14,7 @@ router.use(expressJwt({
   secret: secret,
   algorithms: ['HS256'],
   getToken: (req) => req.cookies.token // 쿠키에서 토큰을 가져옴
-}).unless({ path: ['/api/auth/login', '/api/users', '/api/movies', '/api/auth/logout'] }));
+}).unless({ path: ['/api/auth/login', '/api/users', '/api/movies/*', '/api/auth/logout'] }));
 
 
 // 보호된 경로
