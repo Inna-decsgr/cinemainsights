@@ -36,6 +36,7 @@ app.use(expressJwt({
     '/api/movies/latest',
     '/api/movies/genre',
     '/api/movies/genre/*',
+    '/api/movies/search',
     '/api/auth/logout'
   ]
 })); // 로그인 라우트와 사용자 생성 라우트, 영화 라우트는 제외
