@@ -39,4 +39,44 @@ router.get('/genre/:genreId', async (req, res) => {
 });
 
 
+router.get('/search', async (req, res) => {
+    const query = req.query.q;
+    if (!query) {
+        return res.status(400).json({ message: '쿼리 파라미터가 필요합니다.' });
+    }
+    
+    // 정규 표현식 생성
+    const regex = new RegExp(query, 'i'); // 대소문자 구분 없이 검색
+
+    try {
+        // 배열 필드에 대한 검색 조건을 포함한 검색 조건을 생성합니다.
+        const searchConditions = [
+            { title: regex },
+            { description: regex },
+            { director: regex },
+            {
+                $or: [
+                    { "cast.0": regex },
+                    { "cast.1": regex },
+                    { "cast.2": regex },
+                    { "cast.3": regex }
+                ]
+            }
+        ];
+
+        // 모든 검색 작업을 병렬로 실행하고 결과를 병합
+        const [genreMovies, latestMovies, popularMovies] = await Promise.all([
+            GenreMovie.find({ $or: searchConditions }),
+            LatestMovie.find({ $or: searchConditions }),
+            PopularMovie.find({ $or: searchConditions })
+        ]);
+
+        const movies = [...genreMovies, ...latestMovies, ...popularMovies];
+
+        res.json({ movies });
+    } catch (error) {
+        res.status(500).send(error);
+    }
+});
+
 module.exports = router;
