@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const { PopularMovie, LatestMovie, GenreMovie } = require('../models/Movie');
 
-
 // 인기 영화 정보 가져오기
 router.get('/popular', async (req, res) => {
     try {
@@ -38,7 +37,7 @@ router.get('/genre/:genreId', async (req, res) => {
     }
 });
 
-
+// 영화 검색
 router.get('/search', async (req, res) => {
     const query = req.query.q;
     if (!query) {
@@ -76,6 +75,30 @@ router.get('/search', async (req, res) => {
         res.json({ movies });
     } catch (error) {
         res.status(500).send(error);
+    }
+});
+
+
+// 특정 영화 정보 가져오기
+router.get('/:id', async (req, res) => {
+    const movieId = req.params.id; // 영화 ID를 가져옵니다
+    
+    try {
+        // 여러 컬렉션에서 영화 ID로 영화 조회
+        const collections = [PopularMovie, LatestMovie, GenreMovie];
+        const moviePromises = collections.map(collection => collection.findById(movieId));
+        const movies = await Promise.all(moviePromises);
+        
+        // 영화가 있는 첫 번째 컬렉션의 데이터를 반환
+        const movie = movies.find(movie => movie !== null);
+        if (!movie) {
+            return res.status(404).json({ message: '영화를 찾을 수 없습니다.' });
+        }
+        res.json(movie); // 영화 정보를 JSON 형식으로 응답
+
+    } catch (error) {
+        console.error('Error fetching movie:', error);
+        res.status(500).json({ message: '서버 오류' }); // 오류 발생 시 서버 오류 응답
     }
 });
 
