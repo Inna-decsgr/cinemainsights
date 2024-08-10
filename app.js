@@ -52,6 +52,7 @@ app.use('/api/auth', require('./routes/auth'));  // 인증 관련 라우트
 app.use('/api/protected', require('./routes/protected'));  // 보호된 경로
 app.use('/api/movies', require('./routes/movies'));  // 영화 관련 라우트
 app.use('/api/likes', require('./routes/likes'));  // 찜 관련 라우트
+app.use('/api/bookmarks', require('./routes/bookmarks'));  // 즐겨찾기 관련 라우트
 
 
 // 서버 시작
