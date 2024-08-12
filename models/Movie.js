@@ -1,28 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const ReviewSchema = new Schema({
-    userId: {
-        type: Schema.Types.ObjectId,
-        ref: 'User',
-        required: true
-    },
-    comment: {
-        type: String,
-        required: true
-    },
-    rating: {
-        type: Number,
-        required: true,
-        min: 0,
-        max: 5
-    },
-    date: {
-        type: Date,
-        default: Date.now
-    }
-});
-
 const CommentSchema = new Schema({
     userId: {
         type: Schema.Types.ObjectId,
@@ -72,7 +50,6 @@ const MovieSchema = new Schema({
         type: [String],
         required: true
     },
-    reviews: [ReviewSchema],
     comments: [CommentSchema]
 });
 // 각각 다른 컬렉션에 저장되는 모델 정의
