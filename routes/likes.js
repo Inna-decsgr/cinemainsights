@@ -21,17 +21,20 @@ router.post('/', async (req, res) => {
     if (!user.likes) {
       user.likes = [];
     }
-    const existingLikeIndex = user.likes.findIndex(like => like.movieId === movieId);
 
-    if (existingLikeIndex === -1) {
-      user.likes.push({ movieId, title, imageUrl });
-    } else {
-      // 이미 좋아요가 있는 경우, 업데이트할 수도 있습니다.
-      user.likes[existingLikeIndex] = { movieId, title, imageUrl };
+    // 이미 찜한 영화가 있는지 확인
+    const existingLike = user.likes.find(like => like.title === title);
+
+    if (existingLike) {
+      // 이미 찜한 영화인 경우
+      return res.status(200).json({ message: '이미 찜한 영화입니다.' });
     }
 
+    // 새로운 찜 항목 추가
+    user.likes.push({ movieId, title, imageUrl });
+
     await user.save();
-    res.status(200).json({ message: '좋아요 성공!' });
+    res.status(200).json({ message: '찜 등록되었습니다' });
   } catch (error) {
     console.error('Error liking movie:', error);
     res.status(500).json({ message: 'Internal server error' });
