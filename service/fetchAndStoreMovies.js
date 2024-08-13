@@ -9,8 +9,9 @@ const TMDB_API_KEY = process.env.TMDB_API_KEY;
 
 connectDB();
 
+// 영화 감독 출연진 등 정보 가져오기
 async function fetchCredits(movieId) {
-    const creditsUrl = `https://api.themoviedb.org/3/movie/${movieId}/credits?api_key=${TMDB_API_KEY}`;
+    const creditsUrl = `https://api.themoviedb.org/3/movie/${movieId}/credits?api_key=${TMDB_API_KEY}&language=ko`;
     try {
         const response = await axios.get(creditsUrl);
         const crew = response.data.crew;
@@ -39,7 +40,7 @@ async function fetchAndStoreMovies(Model, url, genreId = null) {
                 director,
                 cast: cast.split(', '),
                 release_date: movie.release_date,
-                rating: movie.vote_average,
+                rating: parseFloat(movie.vote_average.toFixed(1)),
                 poster_url: `https://image.tmdb.org/t/p/w500${movie.poster_path}`,
                 genres: genreId ? [genreId] : movie.genre_ids
             });
