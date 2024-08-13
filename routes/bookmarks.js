@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
 
+
 // 즐겨찾기 기능을 처리하는 POST 요청
 router.post('/', async (req, res) => {
   try {
@@ -21,17 +22,19 @@ router.post('/', async (req, res) => {
     if (!user.bookmarks) {
       user.bookmarks = [];
     }
-    const existingBookmarkIndex = user.bookmarks.findIndex(b => b.movieId === movieId);
 
-    if (existingBookmarkIndex === -1) {
-      user.bookmarks.push({ movieId, title, imageUrl });
-    } else {
-      // 이미 즐겨찾기가 있는 경우, 업데이트할 수도 있습니다.
-      user.bookmarks[existingBookmarkIndex] = { movieId, title, imageUrl };
+    // 이미 찜한 영화가 있는지 확인
+    const existingBookmark = user.bookmarks.find(like => like.title === title);
+
+    if (existingBookmark) {
+      return res.status(200).json({ message: '이미 즐겨찾기된 영화입니다.' });
     }
 
+    // 새로운 즐겨찾기 항목 추가
+    user.bookmarks.push({ movieId, title, imageUrl });
+
     await user.save();
-    res.status(200).json({ message: '즐겨찾기 성공!' });
+    res.status(200).json({ message: '즐겨찾기 되었습니다' });
   } catch (error) {
     console.error('Error bookmarking movie:', error);
     res.status(500).json({ message: 'Internal server error' });
