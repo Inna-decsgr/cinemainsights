@@ -5,9 +5,9 @@ const User = require('../models/User');
 // 찜하기 기능을 처리하는 POST 요청
 router.post('/', async (req, res) => {
   try {
-    const { uid, movieId, title, imageUrl } = req.body;
+    const { uid, movieId, title, imageUrl, director, cast } = req.body;
 
-    if (!uid || !movieId || !title || !imageUrl) {
+    if (!uid || !movieId || !title || !imageUrl || !director ||!cast) {
       return res.status(400).json({ message: 'Required fields are missing' });
     }
 
@@ -31,7 +31,7 @@ router.post('/', async (req, res) => {
     }
 
     // 새로운 찜 항목 추가
-    user.likes.push({ movieId, title, imageUrl });
+    user.likes.push({ movieId, title, imageUrl, director, cast });
 
     await user.save();
     res.status(200).json({ message: '찜 등록되었습니다' });
