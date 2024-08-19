@@ -2,7 +2,7 @@ require('dotenv').config({ path: '../.env' });
 
 const axios = require('axios');
 const mongoose = require('mongoose');
-const { PopularMovie, LatestMovie, GenreMovie } = require('../models/Movie');
+const { PopularMovie, LatestMovie, GenreMovie, Movies } = require('../models/Movie');
 const connectDB = require('../config/mongoose');
 
 const TMDB_API_KEY = process.env.TMDB_API_KEY;
@@ -31,15 +31,22 @@ async function fetchAndStoreMovies(Model, url, genreId = null) {
         const response = await axios.get(url);
         const movies = response.data.results;
 
+        if (movies.length === 0) {
+            console.log(`No movies found at ${url}`);
+            return;
+        }
+
         for (const movie of movies) {
+            // 필수 데이터가 없을 경우 기본값 설정
             const { director, cast } = await fetchCredits(movie.id);
+            const releaseDate = movie.release_date || 'Unknown';  // 기본값 설정
 
             const newMovie = new Model({
                 title: movie.title,
                 description: movie.overview || 'No description available',
                 director,
                 cast: cast.split(', '),
-                release_date: movie.release_date,
+                release_date: releaseDate,
                 rating: parseFloat(movie.vote_average.toFixed(1)),
                 poster_url: `https://image.tmdb.org/t/p/w500${movie.poster_path}`,
                 genres: genreId ? [genreId] : movie.genre_ids
@@ -69,6 +76,7 @@ async function main() {
     try {
         await fetchAndStoreMovies(PopularMovie, `https://api.themoviedb.org/3/movie/popular?api_key=${TMDB_API_KEY}&language=ko&region=KR`);
         await fetchAndStoreMovies(LatestMovie, `https://api.themoviedb.org/3/movie/now_playing?api_key=${TMDB_API_KEY}&language=ko&region=KR`);
+        await fetchAndStoreMovies(Movies, `https://api.themoviedb.org/3/discover/movie?api_key=${TMDB_API_KEY}&language=ko`);
         await fetchAndStoreGenreMovies();
     } finally {
         mongoose.connection.close();
