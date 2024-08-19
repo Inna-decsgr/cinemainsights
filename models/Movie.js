@@ -58,6 +58,7 @@ const MovieSchema = new Schema({
 // 각각 다른 컬렉션에 저장되는 모델 정의
 const PopularMovie = mongoose.model('PopularMovie', MovieSchema, 'PopularMovies');
 const LatestMovie = mongoose.model('LatestMovie', MovieSchema, 'LatestMovies');
-const GenreMovie  = mongoose.model('GenreMovie', MovieSchema, 'GenreMovies');
+const GenreMovie = mongoose.model('GenreMovie', MovieSchema, 'GenreMovies');
+const Movies = mongoose.model('Movies', MovieSchema, 'Movies');
 
-module.exports = { PopularMovie, LatestMovie, GenreMovie}; 
+module.exports = { PopularMovie, LatestMovie, GenreMovie, Movies}; 
