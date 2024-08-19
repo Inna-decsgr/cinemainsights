@@ -10,12 +10,16 @@ const userSchema = new Schema({
   likes: [{
     movieId: { type: String, required: true },
     title: { type: String, required: true },
-    imageUrl: { type: String, required: true }
+    imageUrl: { type: String, required: true },
+    director: { type: String, required: true },
+    cast: [String],
   }],
   bookmarks: [{
     movieId: { type: String, required: true },
     title: { type: String, required: true },
-    imageUrl: { type: String, required: true }
+    imageUrl: { type: String, required: true },
+    director: { type: String, required: true },
+    cast: [String],
   }]
 }, { collection: 'User' }); // 사용자 정의 컬렉션 이름
 
