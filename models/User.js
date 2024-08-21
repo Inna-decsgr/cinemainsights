@@ -13,6 +13,7 @@ const userSchema = new Schema({
     imageUrl: { type: String, required: true },
     director: { type: String, required: true },
     cast: [String],
+    genres: [String],
   }],
   bookmarks: [{
     movieId: { type: String, required: true },
@@ -20,6 +21,7 @@ const userSchema = new Schema({
     imageUrl: { type: String, required: true },
     director: { type: String, required: true },
     cast: [String],
+    genres: [String],
   }]
 }, { collection: 'User' }); // 사용자 정의 컬렉션 이름
 
