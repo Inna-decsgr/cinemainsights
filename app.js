@@ -53,6 +53,7 @@ app.use('/api/protected', require('./routes/protected'));  // 보호된 경로
 app.use('/api/movies', require('./routes/movies'));  // 영화 관련 라우트
 app.use('/api/likes', require('./routes/likes'));  // 찜 관련 라우트
 app.use('/api/bookmarks', require('./routes/bookmarks'));  // 즐겨찾기 관련 라우트
+app.use('/api/recommendations', require('./routes/recommendations'));  // 추천 영화 관련 라우트
 app.use('/api/reviews', require('./routes/reviews'));  // review 관련 라우트
 
 
