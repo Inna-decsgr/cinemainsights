@@ -32,7 +32,7 @@ router.post('/:userId', async (req, res) => {
 
 
   const userVector = createUserGenreVector([...likedGenres, ...bookmarkedGenres], genreMap, true);
-  console.log('User Vector:', userVector);
+  // console.log('User Vector:', userVector);
 
   const recommendations = allMovies.map(movie => {
     const movieGenres = movie.genres || [];
@@ -40,11 +40,25 @@ router.post('/:userId', async (req, res) => {
     const similarity = cosineSimilarity(userVector, movieVector);
 
     //console.log('Movie Vector', movieVector);
-    console.log('코사인 유사도', similarity);
-    return { movie, similarity };
-  }).sort((a, b) => b.similarity - a.similarity);
+    //console.log('코사인 유사도', similarity);
+    return { ...movie, similarity };
+  });
 
-  res.json(recommendations);
+  // 중복 제거를 위한 처리
+  const movieMap = new Map();
+  recommendations.forEach(item => {
+    console.log(item);
+    const title = item._doc.title;
+    if (!movieMap.has(title) || movieMap.get(title).similarity < item.similarity) {
+      movieMap.set(title, item); // 높은 유사도를 가진 항목으로 업데이트
+    }
+  });
+
+  // 중복 제거 후 배열 생성
+  const uniqueRecommendations = Array.from(movieMap.values())
+    .sort((a, b) => b.similarity - a.similarity);
+  
+  res.json(uniqueRecommendations);
 });
 
 
