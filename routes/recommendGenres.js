@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router(); 
-const { Movies } = require('../models/Movie');
+const { PopularMovie, LatestMovie, GenreMovie, Movies } = require('../models/Movie');
 
 const genreMap = {
   28: '액션',
@@ -30,6 +30,11 @@ router.post('/:userId', async (req, res) => {
   const bookmarkedGenres = bookmarkedMovies.flatMap(movie => movie.genres);
   const allMovies = await Movies.find();
 
+  const [popularMovies, genreMovies, latestMovies] = await Promise.all([
+    PopularMovie.find(),
+    LatestMovie.find(),
+    GenreMovie.find()
+  ]);
 
   const userVector = createUserGenreVector([...likedGenres, ...bookmarkedGenres], genreMap, true);
   // console.log('User Vector:', userVector);
@@ -39,9 +44,17 @@ router.post('/:userId', async (req, res) => {
     const movieVector = createUserGenreVector(movieGenres, genreMap, false);
     const similarity = cosineSimilarity(userVector, movieVector);
 
+
+    const matchingMovie = popularMovies.find(m => m.title === movie.title) ||
+                          genreMovies.find(m => m.title === movie.title) ||
+                          latestMovies.find(m => m.title === movie.title);
+
+
+    const movieId = matchingMovie ? matchingMovie.id : movie._id;
+
     //console.log('Movie Vector', movieVector);
     //console.log('코사인 유사도', similarity);
-    return { ...movie, similarity };
+    return { ...movie, id: movieId, similarity };
   });
 
   // 중복 제거를 위한 처리
