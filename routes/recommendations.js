@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { Movies } = require('../models/Movie');
+const { PopularMovie, LatestMovie, GenreMovie, Movies } = require('../models/Movie');
 
 
 router.post('/', async (req, res) => {
@@ -12,12 +12,34 @@ router.post('/', async (req, res) => {
         }
 
         // 모든 영화 가져오기
-        const movies = await Movies.find();
+        const allMovies = await Movies.find();
+
+        // 추가적으로 popular, latest, genreMovies 데이터 가져오기
+        const [popularMovies, genreMovies, latestMovies] = await Promise.all([
+            PopularMovie.find(),
+            LatestMovie.find(),
+            GenreMovie.find()
+        ]);
 
         // 추천 영화 찾기
-        const recommendations = getRecommendations(likedMovies, bookmarkedMovies, movies);
+        const recommendations = getRecommendations(likedMovies, bookmarkedMovies, allMovies);
 
-        res.json(recommendations);
+        // 추천 영화의 title을 기준으로 popular, latest, genreMovies에서 매칭되는 영화의 _id로 대체
+        const updatedRecommendations = recommendations.map(movie => {
+            const matchingMovie = popularMovies.find(m => m.title === movie.title) ||
+                genreMovies.find(m => m.title === movie.title) ||
+                latestMovies.find(m => m.title === movie.title);
+            
+            const movieId = matchingMovie && matchingMovie.id ? matchingMovie.id : movie._id;
+            // 매칭된 영화가 있으면 _id를 덮어쓰기, 없으면 기존 _id 유지
+            if (matchingMovie) {
+                return { ...movie, movieId: movieId };
+            } else {
+                return movie;
+            }
+        });
+
+        res.json(updatedRecommendations);
     } catch (error) {
         console.error('Error fetching recommendations:', error);
         res.status(500).json({ error: 'Internal server error' });
