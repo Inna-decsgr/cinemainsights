@@ -36,6 +36,7 @@ router.post('/:userId', async (req, res) => {
     GenreMovie.find()
   ]);
 
+
   const userVector = createUserGenreVector([...likedGenres, ...bookmarkedGenres], genreMap, true);
   // console.log('User Vector:', userVector);
 
@@ -46,16 +47,21 @@ router.post('/:userId', async (req, res) => {
 
 
     const matchingMovie = popularMovies.find(m => m.title === movie.title) ||
-                          genreMovies.find(m => m.title === movie.title) ||
-                          latestMovies.find(m => m.title === movie.title);
+      genreMovies.find(m => m.title === movie.title) ||
+      latestMovies.find(m => m.title === movie.title);
+    
+    console.log('MatchingMovie', matchingMovie);
+    // 매칭된 영화의 ID로 덮어쓰기, matchingMovie가 없는 경우에도 안전하게 처리
+    const movieId = matchingMovie && matchingMovie.id ? matchingMovie.id : movie._id;
 
+    // _id가 undefined거나 ObjectId가 아닌 경우 기본 처리
+    if (!movieId) {
+      console.error(`Error: Invalid ID for movie with title "${movie.title}"`);
+      return null; // 이 경우 null을 반환하여 이후 필터링 가능
+    }
 
-    const movieId = matchingMovie ? matchingMovie.id : movie._id;
-
-    //console.log('Movie Vector', movieVector);
-    //console.log('코사인 유사도', similarity);
-    return { ...movie, id: movieId, similarity };
-  });
+    return { ...movie, movieId: movieId, similarity };
+  }).filter(movie => movie !== null);
 
   // 중복 제거를 위한 처리
   const movieMap = new Map();
