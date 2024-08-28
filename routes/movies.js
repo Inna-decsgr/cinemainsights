@@ -24,7 +24,7 @@ router.get('/latest', async (req, res) => {
 
 // 장르별 영화 정보 가져오기
 router.get('/genre/:genreId', async (req, res) => {
-    const genreId = parseInt(req.params.genreId, 10); // 장르 ID를 정수로 변환
+    const genreId = parseInt(req.params.genreId, 10); 
     
     try {
         const movies = await GenreMovie.find({ genres: genreId });
@@ -46,7 +46,7 @@ router.get('/search', async (req, res) => {
     const regex = new RegExp(query, 'i'); // 대소문자 구분 없이 검색
 
     try {
-        // 배열 필드에 대한 검색 조건을 포함한 검색 조건을 생성합니다.
+        // 배열 필드에 대한 검색 조건을 포함한 검색 조건을 생성
         const searchConditions = [
             { title: regex },
             { description: regex },
@@ -79,7 +79,7 @@ router.get('/search', async (req, res) => {
 
 // 특정 영화 정보 가져오기
 router.get('/:id', async (req, res) => {
-    const movieId = req.params.id; // 영화 ID를 가져옵니다
+    const movieId = req.params.id; 
     
     try {
         // 여러 컬렉션에서 영화 ID로 영화 조회
@@ -92,11 +92,11 @@ router.get('/:id', async (req, res) => {
         if (!movie) {
             return res.status(404).json({ message: '영화를 찾을 수 없습니다.' });
         }
-        res.json(movie); // 영화 정보를 JSON 형식으로 응답
+        res.json(movie); 
 
     } catch (error) {
         console.error('Error fetching movie:', error);
-        res.status(500).json({ message: '서버 오류' }); // 오류 발생 시 서버 오류 응답
+        res.status(500).json({ message: '서버 오류' });
     }
 });
 

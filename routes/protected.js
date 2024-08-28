@@ -2,7 +2,7 @@ const express = require('express');
 const { expressjwt: expressJwt } = require('express-jwt');
 const dotenv = require('dotenv');
 
-dotenv.config(); // 환경 변수 로드
+dotenv.config(); 
 
 
 const secret = process.env.JWT_SECRET;

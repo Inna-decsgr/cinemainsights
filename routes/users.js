@@ -22,7 +22,7 @@ router.post('/', async (req, res) => {
       user.displayName = displayName;
       user.photoURL = photoURL;
       await user.save();
-      res.status(200).json(user);  // 저장된 사용자 정보를 응답으로 전송
+      res.status(200).json(user); 
     }
   } catch (error) {
     console.error('Error saving user:', error);

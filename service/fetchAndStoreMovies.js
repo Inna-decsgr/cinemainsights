@@ -38,7 +38,7 @@ async function fetchAndStoreMovies(Model, url, genreId = null) {
         for (const movie of movies) {
             // 필수 데이터가 없을 경우 기본값 설정
             const { director, cast } = await fetchCredits(movie.id);
-            const releaseDate = movie.release_date || 'Unknown';  // 기본값 설정
+            const releaseDate = movie.release_date || 'Unknown'; 
 
             const newMovie = new Model({
                 title: movie.title,

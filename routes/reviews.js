@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { PopularMovie, LatestMovie, GenreMovie } = require('../models/Movie'); // 모델 경로 수정 필요
+const { PopularMovie, LatestMovie, GenreMovie } = require('../models/Movie'); 
 
 // 리뷰 추가 API
 router.post('/add', async (req, res) => {
@@ -12,7 +12,6 @@ router.post('/add', async (req, res) => {
 
 
   try {
-    // 영화 모델을 사용하여 영화 찾기
     const movie = await PopularMovie.findOne({title: movieTitle}) || 
                   await LatestMovie.findOne({title: movieTitle}) || 
                   await GenreMovie.findOne({title: movieTitle});
@@ -58,10 +57,7 @@ router.get('/:title/:userId', async (req, res) => {
             return res.status(404).json({ message: '영화를 찾을 수 없습니다.' });
         }
 
-        // 사용자가 작성한 리뷰
         const myReview = movie.comments.filter(comment => comment.userId.toString() === userId);
-
-        // 다른 사용자가 작성한 리뷰
         const otherReviews = movie.comments.filter(comment => comment.userId.toString() !== userId);
 
         res.status(200).json({ myReview, otherReviews });

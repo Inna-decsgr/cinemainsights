@@ -15,7 +15,7 @@ app.use(cookieParser());
 
 // CORS 설정
 app.use(cors({
-  origin: 'http://localhost:8080', // 프론트엔드 주소
+  origin: 'http://localhost:8080', 
   credentials: true,
 }));
 
