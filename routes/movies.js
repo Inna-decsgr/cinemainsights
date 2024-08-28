@@ -25,11 +25,9 @@ router.get('/latest', async (req, res) => {
 // 장르별 영화 정보 가져오기
 router.get('/genre/:genreId', async (req, res) => {
     const genreId = parseInt(req.params.genreId, 10); // 장르 ID를 정수로 변환
-    console.log(`Received request for genre ID: ${genreId}`);
     
     try {
         const movies = await GenreMovie.find({ genres: genreId });
-        console.log(`Found movies: ${movies.length}`);
         res.json(movies);
     } catch (error) {
         console.error('Error fetching movies by genre:', error);

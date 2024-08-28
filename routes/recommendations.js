@@ -23,7 +23,6 @@ router.post('/', async (req, res) => {
 
         // 추천 영화 찾기
         const recommendations = getRecommendations(likedMovies, bookmarkedMovies, allMovies);
-        //console.log('추천', recommendations);
 
         // 추천 영화의 title을 기준으로 popular, latest, genreMovies에서 매칭되는 영화의 _id로 대체
         const updatedRecommendations = recommendations.map(movie => {
@@ -39,7 +38,6 @@ router.post('/', async (req, res) => {
                 return movie;
             }
         });
-        console.log('업데이트 추천', updatedRecommendations);
 
         res.json(updatedRecommendations);
     } catch (error) {

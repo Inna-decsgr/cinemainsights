@@ -4,7 +4,6 @@ const User = require('../models/User');
 
 // 사용자 정보를 저장하는 POST 요청 처리
 router.post('/', async (req, res) => {
-  console.log('Received data:', req.body);
   try {
     const { uid, email, displayName, photoURL } = req.body;
 
@@ -17,14 +16,12 @@ router.post('/', async (req, res) => {
     if (!user) { // 새로운 사용자 생성
       user = new User({ uid, email, displayName, photoURL });
       await user.save();
-      console.log('New user created:', user);
       res.status(201).json({ message: 'New user created', user });
     } else {   // 기존 사용자 업데이트
       user.email = email;
       user.displayName = displayName;
       user.photoURL = photoURL;
       await user.save();
-      console.log('User updated:', user);
       res.status(200).json(user);  // 저장된 사용자 정보를 응답으로 전송
     }
   } catch (error) {

@@ -32,7 +32,6 @@ async function fetchAndStoreMovies(Model, url, genreId = null) {
         const movies = response.data.results;
 
         if (movies.length === 0) {
-            console.log(`No movies found at ${url}`);
             return;
         }
 

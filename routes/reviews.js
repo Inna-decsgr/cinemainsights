@@ -4,8 +4,6 @@ const { PopularMovie, LatestMovie, GenreMovie } = require('../models/Movie'); //
 
 // 리뷰 추가 API
 router.post('/add', async (req, res) => {
-  console.log('Request body', req.body);
-  
   const { movieTitle, userId, userName, comments } = req.body;
 
   if (!movieTitle || !userId || !userName || !comments) {
@@ -20,11 +18,8 @@ router.post('/add', async (req, res) => {
                   await GenreMovie.findOne({title: movieTitle});
 
     if (!movie) {
-      console.log('movie 없음');
       return res.status(404).json({ message: '영화를 찾을 수 없습니다.' });
     }
-
-    console.log('movie는 있음', movie);
 
     // 댓글 배열이 없는 경우 초기화
     if (!movie.comments) {
@@ -38,9 +33,7 @@ router.post('/add', async (req, res) => {
       comments
     });
 
-    console.log('리뷰 추가 전:', movie.comments);
     await movie.save();
-    console.log('리뷰 저장 완료');
 
     res.status(200).json({ message: '리뷰가 성공적으로 추가되었습니다.' });
   } catch (error) {
