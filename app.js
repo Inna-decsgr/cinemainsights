@@ -3,10 +3,9 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const { expressjwt: expressJwt } = require('express-jwt'); // 수정된 임포트 방법
 const cookieParser = require('cookie-parser');
 const connectDB = require('./config/mongoose.js')
-const secret = process.env.JWT_SECRET;
+
 
 const app = express();
 
@@ -17,34 +16,11 @@ app.use(cookieParser());
 // CORS 설정
 app.use(cors({
   origin: 'http://localhost:8080', // 프론트엔드 주소
-  credentials: true
+  credentials: true,
 }));
 
 // MongoDB 연결 설정
 connectDB();
-
-// JWT 검증 미들웨어
-app.use(expressJwt({
-  secret: secret,
-  algorithms: ['HS256'],
-  getToken: (req) => req.cookies.token
-}).unless({ 
-  path: [
-    '/api/auth/login',
-    '/api/users',
-    '/api/movies/popular',
-    '/api/movies/latest',
-    '/api/movies/genre',
-    '/api/movies/genre/*',
-    '/api/movies/search',
-    '/api/auth/logout'
-  ]
-})); // 로그인 라우트와 사용자 생성 라우트, 영화 라우트는 제외
-
-app.use((req, res, next) => {
-  //console.log('Cookies:', req.cookies); // 쿠키 확인
-  next();
-});
 
 // Routes 설정
 app.use('/api/users', require('./routes/users'));  // 사용자 관련 라우트
@@ -56,6 +32,7 @@ app.use('/api/bookmarks', require('./routes/bookmarks'));  // 즐겨찾기 관�
 app.use('/api/recommendations', require('./routes/recommendations'));  // 추천 영화 관련 라우트
 app.use('/api/recommendGenres', require('./routes/recommendGenres'));  // 장르별 추천 영화 관련 라우트
 app.use('/api/reviews', require('./routes/reviews'));  // review 관련 라우트
+
 
 
 // 서버 시작
