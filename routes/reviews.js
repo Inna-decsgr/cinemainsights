@@ -67,4 +67,41 @@ router.get('/:title/:userId', async (req, res) => {
     }
 });
 
+// 리뷰 삭제 API
+router.delete('/delete', async (req, res) => {
+  const { movieTitle, userId, comments } = req.body;
+
+  if (!movieTitle || !userId || !comments) {
+    return res.status(400).json({ message: '모든 필드가 필요합니다.' });
+  }
+
+  try {
+    const movie = await PopularMovie.findOne({ title: movieTitle }) || 
+                  await LatestMovie.findOne({ title: movieTitle }) || 
+                  await GenreMovie.findOne({ title: movieTitle });
+
+    if (!movie) {
+      return res.status(404).json({ message: '영화를 찾을 수 없습니다.' });
+    }
+
+    const commentIndex = movie.comments.findIndex(
+      comment => comment.userId.toString() === userId && comment.comments === comments
+    );
+
+    if (commentIndex === -1) {
+      return res.status(404).json({ message: '리뷰를 찾을 수 없습니다.' });
+    }
+
+    // 해당 리뷰 삭제
+    movie.comments.splice(commentIndex, 1);
+
+    await movie.save();
+
+    res.status(200).json({ message: '리뷰가 성공적으로 삭제되었습니다.' });
+  } catch (error) {
+    console.error('리뷰 삭제 중 오류 발생:', error);
+    res.status(500).json({ message: '서버 오류 발생' });
+  }
+});
+
 module.exports = router;
