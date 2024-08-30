@@ -104,4 +104,42 @@ router.delete('/delete', async (req, res) => {
   }
 });
 
+// 리뷰 업데이트 API
+router.post('/update', async (req, res) => {
+  const { movieTitle, userId, comments, reviewId } = req.body;
+
+  if (!movieTitle || !userId || !comments || !reviewId) {
+    return res.status(400).json({ message: '모든 필드가 필요합니다.' });
+  }
+
+  try {
+    const movie = await PopularMovie.findOne({ title: movieTitle }) || 
+                  await LatestMovie.findOne({ title: movieTitle }) || 
+                  await GenreMovie.findOne({ title: movieTitle });
+
+    if (!movie) {
+      return res.status(404).json({ message: '영화를 찾을 수 없습니다.' });
+    }
+
+    const review = movie.comments.find(comment => comment._id.toString() === reviewId && comment.userId.toString() === userId);
+
+    if (!review) {
+      return res.status(404).json({ message: '리뷰를 찾을 수 없습니다.' });
+    }
+
+    // 리뷰 업데이트
+    review.comments = comments;
+    await movie.save();
+
+    res.status(200).json({ message: '리뷰가 성공적으로 수정되었습니다.' });
+  } catch (error) {
+    console.error('리뷰 수정 중 오류 발생:', error);
+    res.status(500).json({ message: '서버 오류 발생' });
+  }
+});
+
+
+
+
+
 module.exports = router;
